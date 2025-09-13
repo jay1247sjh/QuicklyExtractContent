@@ -18,6 +18,8 @@
         <Twelvemonkeys.version>3.10.1</Twelvemonkeys.version>
         <Slf4j.version>2.0.13</Slf4j.version>
         <Logback.version>1.5.6</Logback.version>
+        <Lombok.version>1.18.30</Lombok.version>
+        <OpenCv.version>4.5.1-2</OpenCv.version>
     </properties>
 
     <dependencies>
@@ -51,11 +53,17 @@
             <artifactId>logback-classic</artifactId>
             <version>${Logback.version}</version>
         </dependency>
+        <!--Lombok-->
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.18.30</version>
-            <scope>provided</scope>
+            <version>${Lombok.version}</version>
+        </dependency>
+        <!---->
+        <dependency>
+            <groupId>org.openpnp</groupId>
+            <artifactId>opencv</artifactId>
+            <version>${OpenCv.version}</version>
         </dependency>
     </dependencies>
 

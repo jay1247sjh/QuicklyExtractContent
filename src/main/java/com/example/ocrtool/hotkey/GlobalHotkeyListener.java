@@ -1,5 +1,6 @@
 package com.example.ocrtool.hotkey;
 
+import com.example.ocrtool.ocr.OcrHandler;
 import com.example.ocrtool.screenshot.ScreenSelectionWindow;
 import com.github.kwhat.jnativehook.GlobalScreen;
 import com.github.kwhat.jnativehook.NativeHookException;
@@ -44,6 +45,11 @@ public class GlobalHotkeyListener implements NativeKeyListener {
     public void nativeKeyReleased(NativeKeyEvent nativeEvent) {
         // 将按键加入Set集合
         pressedKeys.add(nativeEvent.getKeyCode());
+        // 如果已按集合长度大于目标集合长度则清空，避免误触截图
+        if (pressedKeys.size() > targetKeys.size()) {
+            // 清空集合
+            pressedKeys.clear();
+        }
         // 如果全部按键都在集合中，则触发快捷键
         if (pressedKeys.containsAll(targetKeys)) {
             ScreenSelectionWindow window = null;
@@ -51,7 +57,10 @@ public class GlobalHotkeyListener implements NativeKeyListener {
                 // 创建屏幕对象
                 window = new ScreenSelectionWindow();
                 // 阻塞进程开始截屏
-                window.select();
+                Rectangle rectangle = window.select();
+                // 识别内容
+                String context = OcrHandler.identifyContext(rectangle);
+                System.out.println(context);
             } catch (AWTException | InterruptedException e) {
                 throw new RuntimeException(e);
             }
