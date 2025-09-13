@@ -61,10 +61,11 @@ public class GlobalHotkeyListener implements NativeKeyListener {
                 // 识别内容
                 String context = OcrHandler.identifyContext(rectangle);
                 System.out.println(context);
-            } catch (AWTException | InterruptedException e) {
-                throw new RuntimeException(e);
+            } catch (Exception e) {
+                log.error(e.getMessage());
+            } finally {
+                pressedKeys.clear();
             }
-            pressedKeys.remove(nativeEvent.getKeyCode());
         }
     }
 
@@ -87,7 +88,7 @@ public class GlobalHotkeyListener implements NativeKeyListener {
 
             log.info("😊全局快捷键监听已启动，您当前的快捷键是:" + originHotkey);
         } catch (NativeHookException e) {
-            log.error("🤯全局快捷键监听启动失败", e);
+            log.error("🤯全局快捷键监听启动失败");
         }
     }
 
@@ -100,7 +101,7 @@ public class GlobalHotkeyListener implements NativeKeyListener {
 
             log.info("😊全局快捷键监听已停止");
         } catch (NativeHookException e) {
-            log.error("🤯停止全局快捷键监听失败", e);
+            log.error("🤯停止全局快捷键监听失败");
         }
     }
 }

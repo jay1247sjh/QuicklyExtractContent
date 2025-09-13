@@ -1,9 +1,11 @@
 package com.example.ocrtool.ocr;
 
+import com.example.ocrtool.opencv.ImageOptimizationHandler;
 import lombok.extern.slf4j.Slf4j;
 import net.sourceforge.tess4j.ITesseract;
 import net.sourceforge.tess4j.Tesseract;
 import net.sourceforge.tess4j.TesseractException;
+import org.opencv.core.Size;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -31,7 +33,7 @@ public class OcrHandler {
             // 设置中文
             tesseract.setLanguage("chi_sim");
         } catch (Exception e) {
-            log.error("😭初始化OCR失败", e);
+            throw new RuntimeException("😭初始化OCR失败");
         }
     }
 
@@ -40,15 +42,18 @@ public class OcrHandler {
      */
     public static String identifyContext(Rectangle rectangle) throws AWTException {
         Robot robot = new Robot();
-        // 创建屏幕捕获对象
-        BufferedImage captureImage = robot.createScreenCapture(rectangle);
         try {
+            // 创建屏幕捕获对象
+            BufferedImage captureImage = robot.createScreenCapture(rectangle);
+            // 创建图片优化对象
+            ImageOptimizationHandler image = new ImageOptimizationHandler(captureImage);
+            // 图片闭运算
+            image.morphClose(new Size(2, 2));
             // 进行OCR识别
-            return tesseract.doOCR(captureImage);
-        } catch (TesseractException e) {
-            log.error("😒OCR失败", e);
-            // 识别失败返回空字符串
-            return "";
+            return tesseract.doOCR(image.getBufferedImage());
+        } catch (Exception e) {
+            // 用于给上层捕获异常
+            throw new RuntimeException("😒OCR失败");
         }
     }
 }
