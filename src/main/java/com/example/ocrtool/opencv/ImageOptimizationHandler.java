@@ -1,6 +1,5 @@
 package com.example.ocrtool.opencv;
 
-import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.Size;

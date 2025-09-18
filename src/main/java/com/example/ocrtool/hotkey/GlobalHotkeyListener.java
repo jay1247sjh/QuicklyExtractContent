@@ -2,6 +2,7 @@ package com.example.ocrtool.hotkey;
 
 import com.example.ocrtool.ocr.OcrHandler;
 import com.example.ocrtool.screenshot.ScreenSelectionWindow;
+import com.example.ocrtool.ui.GUIUtils;
 import com.github.kwhat.jnativehook.GlobalScreen;
 import com.github.kwhat.jnativehook.NativeHookException;
 import com.github.kwhat.jnativehook.keyboard.NativeKeyEvent;
@@ -60,7 +61,8 @@ public class GlobalHotkeyListener implements NativeKeyListener {
                 Rectangle rectangle = window.select();
                 // 识别内容
                 String context = OcrHandler.identifyContext(rectangle);
-                System.out.println(context);
+                // 展示内容
+                GUIUtils.contentShow(context);
             } catch (Exception e) {
                 log.error(e.getMessage());
             } finally {
