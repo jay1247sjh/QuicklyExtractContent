@@ -38,8 +38,6 @@ public class ScreenSelectionWindow extends JFrame {
         setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
         // 设置JPanel本身颜色为透明，确保不遮挡内容
         setBackground(new Color(0, 0, 0, 0));
-
-
         // 截图作为背景
         Robot robot = new Robot();
         // 设为背景

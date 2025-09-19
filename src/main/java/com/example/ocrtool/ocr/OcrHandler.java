@@ -46,8 +46,10 @@ public class OcrHandler {
             BufferedImage captureImage = robot.createScreenCapture(rectangle);
             // 创建图片优化对象
             ImageOptimizationHandler image = new ImageOptimizationHandler(captureImage);
-            // 图片闭运算
-            image.morphClose(new Size(2, 2));
+            // 转化为灰度图
+            image.toGray();
+            // 高斯去噪
+            image.denoise(new Size(3, 3));
             // 进行OCR识别
             return tesseract.doOCR(image.getBufferedImage());
         } catch (Exception e) {
