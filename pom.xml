@@ -20,7 +20,9 @@
         <Logback.version>1.5.6</Logback.version>
         <Lombok.version>1.18.30</Lombok.version>
         <OpenCv.version>4.5.1-2</OpenCv.version>
-        <maven.jar.version>3.3.0</maven.jar.version>
+        <maven.jar.plugin.version>3.3.0</maven.jar.plugin.version>
+        <maven.dependency.plugin.version>3.1.2</maven.dependency.plugin.version>
+        <maven.resources.plugin.version>3.3.1</maven.resources.plugin.version>
     </properties>
 
     <dependencies>
@@ -78,30 +80,25 @@
                     <include>**/*.properties</include>
                     <include>**/*.xml</include>
                 </includes>
+                <excludes>
+                    <exclude>tessdata/**</exclude>
+                </excludes>
             </resource>
             <resource>
                 <directory>src/main/resources</directory>
                 <filtering>false</filtering>
-                <!--对tessdata文件禁用过滤，防止二进制文件被损坏-->
                 <includes>
                     <include>tessdata/**</include>
-                </includes>
-            </resource>
-            <!--将根目录下的lib文件夹所有文件复制到输出目录的lib下-->
-            <resource>
-                <targetPath>lib</targetPath>
-                <directory>lib</directory>
-                <includes>
-                    <include>**/*</include>
                 </includes>
             </resource>
         </resources>
 
         <plugins>
+            <!--廋jar版本发布-->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
-                <version>${maven.jar.version}</version>
+                <version>${maven.jar.plugin.version}</version>
                 <configuration>
                     <archive>
                         <manifest>
@@ -113,9 +110,68 @@
                     </archive>
                 </configuration>
             </plugin>
+            <!--把第三方依赖拷贝过来，形成廋jar+lib目录-->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>${maven.dependency.plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>copy-dependencies</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/lib</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <!--把lib文件复制到target/lib下-->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>${maven.resources.plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>copy-tessdata</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/tessdata</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>src/main/resources/tessdata</directory>
+                                    <filtering>false</filtering>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>copy-lib-resources</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/lib</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>lib</directory>
+                                    <filtering>false</filtering>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 
+    <!--变量-->
     <profiles>
         <profile>
             <id>dev</id>
