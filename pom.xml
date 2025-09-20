@@ -20,6 +20,7 @@
         <Logback.version>1.5.6</Logback.version>
         <Lombok.version>1.18.30</Lombok.version>
         <OpenCv.version>4.5.1-2</OpenCv.version>
+        <maven.jar.version>3.3.0</maven.jar.version>
     </properties>
 
     <dependencies>
@@ -68,32 +69,68 @@
     </dependencies>
 
     <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <!--启用变量替换-->
+                <filtering>true</filtering>
+                <includes>
+                    <include>**/*.properties</include>
+                    <include>**/*.xml</include>
+                </includes>
+            </resource>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>false</filtering>
+                <!--对tessdata文件禁用过滤，防止二进制文件被损坏-->
+                <includes>
+                    <include>tessdata/**</include>
+                </includes>
+            </resource>
+            <!--将根目录下的lib文件夹所有文件复制到输出目录的lib下-->
+            <resource>
+                <targetPath>lib</targetPath>
+                <directory>lib</directory>
+                <includes>
+                    <include>**/*</include>
+                </includes>
+            </resource>
+        </resources>
+
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-assembly-plugin</artifactId>
-                <version>3.3.0</version>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>${maven.jar.version}</version>
                 <configuration>
-                    <!--把依赖打进一个jar包（fat-jar）-->
-                    <descriptorRefs>
-                        <descriptorRef>jar-with-dependencies</descriptorRef>
-                    </descriptorRefs>
                     <archive>
                         <manifest>
+                            <!--自动列出所有依赖路径-->
+                            <addClasspath>true</addClasspath>
+                            <!--指定主类-->
                             <mainClass>com.example.ocrtool.Main</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
-                <executions>
-                    <execution>
-                        <id>make-assembly</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>single</goal>
-                        </goals>
-                    </execution>
-                </executions>
             </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <profile>
+            <id>dev</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <env>dev</env>
+            </properties>
+        </profile>
+        <profile>
+            <id>prod</id>
+            <properties>
+                <env>prod</env>
+            </properties>
+        </profile>
+    </profiles>
 </project>

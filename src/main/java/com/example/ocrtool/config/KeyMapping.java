@@ -3,6 +3,8 @@ package com.example.ocrtool.config;
 import com.example.ocrtool.Main;
 import com.github.kwhat.jnativehook.keyboard.NativeKeyEvent;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashSet;
@@ -106,10 +108,19 @@ public final class KeyMapping {
         try {
             // 创建配置文件对象
             Properties props = new Properties();
-            // 从类路径（target/classes/）查找文件并进行加载
-            try (InputStream in = Main.class.getClassLoader().getResourceAsStream("config.properties")) {
-                if (in != null) {
+            // 先从外部配置文件读取（jar同目录）
+            File externalConfig = new File("config.properties");
+            // 如果存在则优先读取外部的
+            if (externalConfig.exists()) {
+                try (InputStream in = new FileInputStream(externalConfig)) {
                     props.load(in);
+                }
+            } else {
+                // 从类路径（target/classes/）查找文件并进行加载
+                try (InputStream in = Main.class.getClassLoader().getResourceAsStream("config.properties")) {
+                    if (in != null) {
+                        props.load(in);
+                    }
                 }
             }
             // 设置默认热键为CTRL+SHIFT+A

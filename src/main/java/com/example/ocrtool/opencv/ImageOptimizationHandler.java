@@ -19,7 +19,7 @@ public class ImageOptimizationHandler {
     private Mat mat;
 
     static {
-        System.load(System.getProperty("user.dir") + "/lib/opencv_java4120.dll");
+
     }
 
     // 构造图片对象
